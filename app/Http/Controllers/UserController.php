@@ -199,7 +199,9 @@ public function saveTime(Request $request)
 
     $leastTime = DB::table('elapsed_time')
         ->where('player_id', $playerId)
-        ->min('total_elapsed_time');
+        ->max('total_elapsed_time');
+
+        dd($leastTime);
 
     $typingPoints =round(100*(1-($average/22)),2);
 
@@ -270,11 +272,11 @@ public function saveTrain(Request $request)
     // ✅ USE ARRAY (not JSON)
     $timesPerLevelArray = array_map('floatval', $request->times_per_level);
 
-    // ✅ Calculate average correctly
+    // Calculate average correctly
     $averageTime = array_sum($timesPerLevelArray) / count($timesPerLevelArray);
     $averageTime = round($averageTime, 2);
 
-    // ✅ Typing points formula
+    // Typing points formula
     $typingPoints = round((($averageTime * 0.4) + ($levelReached * 0.6)) / 2, 2);
 
     // (optional) store JSON if needed
