@@ -13,4 +13,4 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 RUN chmod -R 775 storage bootstrap/cache
 
-CMD ["sh", "-c", "php -S 0.0.0.0:${PORT} -t public"]
+CMD sh -c "php -S 0.0.0.0:$PORT -t public"
