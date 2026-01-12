@@ -23,8 +23,12 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
-# Ensure PORT is used if provided, fallback to 8000 for local testing
+# Copy start.sh and make it executable inside the container
+COPY start.sh .
+RUN chmod +x start.sh
+
+# Default port (for local testing)
 ENV PORT 8000
 
-# Start PHP built-in server on the correct port
-CMD sh -c "php -S 0.0.0.0:\$PORT -t public"
+# Use start.sh as entrypoint
+CMD ["./start.sh"]
