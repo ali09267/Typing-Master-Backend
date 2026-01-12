@@ -1,30 +1,26 @@
-# Use PHP 8.3 CLI image
-FROM php:8.3-cli
+FROM dunglas/frankenphp:php8.3
 
-# Set working directory inside container
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
+RUN install-php-extensions \
+    pdo_mysql \
+    mbstring \
     zip \
-    curl \
-    libzip-dev \
-    libonig-dev \
-    && docker-php-ext-install pdo_mysql mbstring zip
+    opcache
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy Laravel project files
 COPY . .
 
-# Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose the port Laravel will run on
+RUN php artisan config:clear \
+ && php artisan config:cache \
+ && php artisan route:cache \
+ && php artisan view:cache
+
+RUN chmod -R 775 storage bootstrap/cache
+
 EXPOSE 8080
 
-# Run Laravel using PHP's built-in server
-CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
