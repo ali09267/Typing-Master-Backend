@@ -13,4 +13,5 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 RUN chmod -R 775 storage bootstrap/cache
 
-CMD sh -c "php -S 0.0.0.0:$PORT -t public"
+# TEMPORARY CMD to check if $PORT exists
+CMD sh -c "echo \$PORT && php -S 0.0.0.0:\$PORT -t public"
